@@ -7,3 +7,8 @@ config.local.py
 *.sqlite
 *.sqlite3
 *.log
+config.py
+*.db
+*.sqlite
+*.sqlite3
+.env
