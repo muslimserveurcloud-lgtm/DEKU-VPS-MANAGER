@@ -64,10 +64,10 @@ jobs:
         run: |
           cat > config.py <<PYEOF
           BOT_TOKEN = ${BOT_TOKEN@Q}
-          ADMIN_ID = ${ADMIN_ID@Q}
+          ADMIN_ID = int(${ADMIN_ID@Q})
           ADMIN_USERNAME = ${ADMIN_USERNAME@Q}
           VPS_IP = ${VPS_IP@Q}
-          DEFAULT_PORT = ${DEFAULT_PORT@Q}
+          DEFAULT_PORT = int(${DEFAULT_PORT@Q})
           DB_PATH = ${DB_PATH@Q}
           SCRIPTS_DIR = ${SCRIPTS_DIR@Q}
           SPAM_DELAY = ${SPAM_DELAY@Q}
