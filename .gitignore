@@ -12,3 +12,4 @@ config.py
 *.sqlite
 *.sqlite3
 .env
+config.py
