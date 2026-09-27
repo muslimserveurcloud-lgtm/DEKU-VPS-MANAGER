@@ -6,7 +6,7 @@ import sqlite3
 import random
 import string
 from datetime import datetime, timedelta
-from config import DB_PATH
+from config import DB_PATH, ADMIN_ID, ADMIN_USERNAME
 
 
 def get_conn():
@@ -113,7 +113,7 @@ def init_db():
 
     c.execute(
         "INSERT OR IGNORE INTO admins (telegram_id, username) VALUES (?, ?)",
-        (1299831974, "@darkdeku225")
+        (ADMIN_ID, ADMIN_USERNAME)
     )
     conn.commit()
     conn.close()
