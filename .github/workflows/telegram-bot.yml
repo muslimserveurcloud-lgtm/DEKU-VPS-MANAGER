@@ -1,0 +1,63 @@
+name: MUSLIM VPS MANAGER
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  bot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    steps:
+      - name: Recuperer le projet
+        uses: actions/checkout@v4
+
+      - name: Installer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Installer les dependances
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Creer config.py depuis les secrets
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          ADMIN_ID: ${{ secrets.ADMIN_ID }}
+          ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
+          VPS_IP: ${{ secrets.VPS_IP }}
+          DEFAULT_PORT: ${{ secrets.DEFAULT_PORT }}
+          DB_PATH: ${{ secrets.DB_PATH }}
+          SCRIPTS_DIR: ${{ secrets.SCRIPTS_DIR }}
+          SPAM_DELAY: ${{ secrets.SPAM_DELAY }}
+          MAX_MSG_LENGTH: ${{ secrets.MAX_MSG_LENGTH }}
+        run: |
+          cat > config.py <<PYEOF
+          BOT_TOKEN = ${BOT_TOKEN@Q}
+          ADMIN_ID = ${ADMIN_ID@Q}
+          ADMIN_USERNAME = ${ADMIN_USERNAME@Q}
+          VPS_IP = ${VPS_IP@Q}
+          DEFAULT_PORT = ${DEFAULT_PORT@Q}
+          DB_PATH = ${DB_PATH@Q}
+          SCRIPTS_DIR = ${SCRIPTS_DIR@Q}
+          SPAM_DELAY = ${SPAM_DELAY@Q}
+          MAX_MSG_LENGTH = ${MAX_MSG_LENGTH@Q}
+          PYEOF
+
+      - name: Verifier la configuration
+        run: |
+          test -n "$BOT_TOKEN"
+          test -n "$ADMIN_ID"
+          test -n "$VPS_IP"
+          echo "Configuration presente."
+
+      - name: Lancer le bot Telegram
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: |
+          python -u bot.py
