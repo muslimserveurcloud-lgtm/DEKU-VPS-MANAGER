@@ -2,9 +2,6 @@ name: MUSLIM VPS MANAGER
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
 
 jobs:
   bot:
@@ -24,6 +21,34 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+
+      - name: Verifier les secrets
+        env:
+          HAS_BOT_TOKEN: ${{ secrets.BOT_TOKEN != '' }}
+          HAS_ADMIN_ID: ${{ secrets.ADMIN_ID != '' }}
+          HAS_ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME != '' }}
+          HAS_VPS_IP: ${{ secrets.VPS_IP != '' }}
+          HAS_DEFAULT_PORT: ${{ secrets.DEFAULT_PORT != '' }}
+          HAS_DB_PATH: ${{ secrets.DB_PATH != '' }}
+          HAS_SCRIPTS_DIR: ${{ secrets.SCRIPTS_DIR != '' }}
+          HAS_SPAM_DELAY: ${{ secrets.SPAM_DELAY != '' }}
+          HAS_MAX_MSG_LENGTH: ${{ secrets.MAX_MSG_LENGTH != '' }}
+        run: |
+          echo "BOT_TOKEN present: $HAS_BOT_TOKEN"
+          echo "ADMIN_ID present: $HAS_ADMIN_ID"
+          echo "ADMIN_USERNAME present: $HAS_ADMIN_USERNAME"
+          echo "VPS_IP present: $HAS_VPS_IP"
+          echo "DEFAULT_PORT present: $HAS_DEFAULT_PORT"
+          echo "DB_PATH present: $HAS_DB_PATH"
+          echo "SCRIPTS_DIR present: $HAS_SCRIPTS_DIR"
+          echo "SPAM_DELAY present: $HAS_SPAM_DELAY"
+          echo "MAX_MSG_LENGTH present: $HAS_MAX_MSG_LENGTH"
+
+          test "$HAS_BOT_TOKEN" = "true"
+          test "$HAS_ADMIN_ID" = "true"
+          test "$HAS_VPS_IP" = "true"
+
+          echo "Secrets obligatoires presents."
 
       - name: Creer config.py depuis les secrets
         env:
@@ -48,13 +73,6 @@ jobs:
           SPAM_DELAY = ${SPAM_DELAY@Q}
           MAX_MSG_LENGTH = ${MAX_MSG_LENGTH@Q}
           PYEOF
-
-      - name: Verifier la configuration
-        run: |
-          test -n "$BOT_TOKEN"
-          test -n "$ADMIN_ID"
-          test -n "$VPS_IP"
-          echo "Configuration presente."
 
       - name: Lancer le bot Telegram
         env:
